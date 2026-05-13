@@ -1,0 +1,89 @@
+2026-05-14 00:32:42,787 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getMe "HTTP/1.1 200 OK"
+2026-05-14 00:32:43,088 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/deleteWebhook "HTTP/1.1 200 OK"
+2026-05-14 00:32:43,092 - INFO - Application started
+2026-05-14 00:32:54,043 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:33:04,330 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:33:14,628 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:33:25,069 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:33:35,412 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:33:45,787 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:33:56,230 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:34:06,621 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:34:16,976 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:34:27,331 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:34:37,669 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:34:47,944 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:34:58,378 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:35:08,807 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:35:13,636 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:35:13,638 - INFO - Application is stopping. This might take a moment.
+2026-05-14 00:35:13,638 - INFO - Application.stop() complete
+2026-05-14 00:39:58,854 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getMe "HTTP/1.1 200 OK"
+2026-05-14 00:39:59,139 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/deleteWebhook "HTTP/1.1 200 OK"
+2026-05-14 00:39:59,143 - INFO - Application started
+2026-05-14 00:40:03,314 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:09,699 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:15,515 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:25,842 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:36,118 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:46,423 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:57,509 - INFO - HTTP Request: POST https://api.telegram.org/bot7977309199:AAFqaDva8fxo3bB7QZe83y7xSauEiT0wTEU/getUpdates "HTTP/1.1 200 OK"
+2026-05-14 00:40:57,509 - INFO - Application is stopping. This might take a moment.
+2026-05-14 00:40:57,509 - INFO - Application.stop() complete
+2026-05-14 00:51:34,998 - INFO - Rahul AI News Bot Started
+2026-05-14 00:51:35,956 - INFO - Fetching: https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-IN&gl=IN&ceid=IN:en
+2026-05-14 00:51:36,807 - INFO - Fetching: https://techcrunch.com/feed/
+2026-05-14 00:51:36,931 - INFO - Fetching: https://hnrss.org/frontpage
+2026-05-14 00:52:04,816 - INFO - Fetching: https://news.google.com/rss/search?q=artificial+intelligence&hl=en-IN&gl=IN&ceid=IN:en
+2026-05-14 00:52:05,557 - INFO - Fetching: https://techcrunch.com/category/artificial-intelligence/feed/
+2026-05-14 00:52:05,765 - INFO - Fetching: https://hnrss.org/newest?q=AI
+2026-05-14 00:54:01,743 - INFO - Fetching: https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-IN&gl=IN&ceid=IN:en
+2026-05-14 00:54:02,469 - INFO - Fetching: https://feeds.reuters.com/Reuters/worldNews
+2026-05-14 00:55:26,912 - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-2' coro=<handle_callback_query() done, defined at C:\Users\rahul\Desktop\news_bot\news.py:970> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "C:\Users\rahul\Desktop\news_bot\news.py", line 1174, in <module>
+    asyncio.run(main_loop())
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\asyncio\runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\asyncio\base_events.py", line 636, in run_until_complete
+    self.run_forever()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\asyncio\base_events.py", line 603, in run_forever
+    self._run_once()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\asyncio\base_events.py", line 1909, in _run_once
+    handle._run()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\rahul\Desktop\news_bot\news.py", line 989, in handle_callback_query
+    response = requests.get(
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\requests\api.py", line 87, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\urllib3\connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "C:\Users\rahul\Desktop\news_bot\.newsbot\lib\site-packages\urllib3\connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\http\client.py", line 1375, in getresponse
+    response.begin()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\http\client.py", line 318, in begin
+    version, status, reason = self._read_status()
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\http\client.py", line 279, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\ssl.py", line 1274, in recv_into
+    return self.read(nbytes, buffer)
+  File "C:\Users\rahul\AppData\Local\Programs\Python\Python310\lib\ssl.py", line 1130, in read
+    return self._sslobj.read(len, buffer)
+KeyboardInterrupt
