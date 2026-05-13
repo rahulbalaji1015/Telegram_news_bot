@@ -1,4 +1,4 @@
-# 🚀 Rahul AI News Bot
+# 🚀 Telegram AI News Bot
 
 An advanced AI-powered Telegram News Automation Bot built using Python, RSS feeds, Telegram Bot API, SQLite, and intelligent news ranking.
 
@@ -287,7 +287,7 @@ Create:
 Example workflow:
 
 ```yaml
-name: Rahul AI News Bot
+name: Telegram AI News Bot
 
 on:
   schedule:
