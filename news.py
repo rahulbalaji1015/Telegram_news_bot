@@ -14,8 +14,10 @@ from rapidfuzz import fuzz
 from textblob import TextBlob
 
 # =========================================================
-# ENV
+# CONFIG
 # =========================================================
+
+RUN_MODE = os.getenv("RUN_MODE", "github")  # github / local
 
 def load_dotenv(path="newsbot.env"):
     if not os.path.exists(path):
@@ -35,7 +37,6 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-
 TOTAL_NEWS = 7
 
 # =========================================================
@@ -67,7 +68,7 @@ CREATE TABLE IF NOT EXISTS news (
 conn.commit()
 
 # =========================================================
-# RSS
+# RSS FEEDS
 # =========================================================
 
 RSS_FEEDS = {
@@ -121,6 +122,7 @@ def tg(method, payload):
         return requests.post(url, data=payload, timeout=20).json()
     except Exception as e:
         logging.error(e)
+        print("Telegram error:", e)
 
 # =========================================================
 # HELPERS
@@ -149,14 +151,6 @@ def hashtags(title):
         f"#{w}" for w in title.split()[:5]
         if len(w) > 3
     )
-
-
-def detect_category(title):
-    t = title.lower()
-    for cat, kws in CATEGORY_KEYWORDS.items():
-        if any(k in t for k in kws):
-            return cat
-    return "General"
 
 
 def trend_keywords(news):
@@ -199,19 +193,15 @@ def dedupe(news):
 def rank(news):
     for n in news:
         score = 0
-
         title = n["title"].lower()
 
-        # keyword score
         for kws in CATEGORY_KEYWORDS.values():
             if any(k in title for k in kws):
                 score += 3
 
-        # breaking
         if is_breaking(title):
             score += 6
 
-        # source boost
         for src, val in SOURCE_SCORES.items():
             if src in n["source"].lower():
                 score += val
@@ -221,7 +211,7 @@ def rank(news):
     return sorted(news, key=lambda x: x["score"], reverse=True)
 
 # =========================================================
-# UI BUTTONS
+# BUTTONS
 # =========================================================
 
 def buttons():
@@ -240,7 +230,7 @@ def buttons():
     }
 
 # =========================================================
-# SEND NEWS (FULL FEATURE ENGINE)
+# SEND NEWS ENGINE
 # =========================================================
 
 async def send_news(category, chat_id):
@@ -284,7 +274,6 @@ async def send_news(category, chat_id):
 
         await asyncio.sleep(1)
 
-    # digest
     digest = "🧠 DAILY DIGEST\n\n" + "\n".join(
         f"• {n['title']}" for n in news[:5]
     )
@@ -295,23 +284,37 @@ async def send_news(category, chat_id):
     })
 
 # =========================================================
-# CALLBACK HANDLER (GITHUB SAFE)
+# TELEGRAM OFFSET HANDLING
+# =========================================================
+
+def get_last_update():
+    try:
+        with open("offset.txt", "r") as f:
+            return int(f.read().strip())
+    except:
+        return 0
+
+
+def save_last_update(offset):
+    with open("offset.txt", "w") as f:
+        f.write(str(offset))
+
+# =========================================================
+# CALLBACK HANDLER
 # =========================================================
 
 async def handle_updates():
 
-    last = None
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
-
-    if last:
-        url += f"?offset={last+1}"
+    last_update = get_last_update()
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={last_update + 1}"
 
     try:
         res = requests.get(url, timeout=20).json()
 
         if res.get("ok"):
             for u in res["result"]:
-                last = u["update_id"]
+                update_id = u["update_id"]
+                save_last_update(update_id)
 
                 if "message" in u:
                     chat_id = u["message"]["chat"]["id"]
@@ -336,15 +339,23 @@ async def handle_updates():
 
     except Exception as e:
         logging.error(e)
+        print("Error:", e)
 
 # =========================================================
 # MAIN (GITHUB ACTION SAFE)
 # =========================================================
 
 async def main():
-    print("Bot Running (Full Feature Mode)")
-    await handle_updates()
+
+    print("🚀 Bot Running")
+
+    # ALWAYS run news in GitHub Actions
     await send_news("Technology", CHAT_ID)
 
+    # Optional local mode
+    if RUN_MODE == "local":
+        await handle_updates()
 
-asyncio.run(main())
+
+if __name__ == "__main__":
+    asyncio.run(main())
