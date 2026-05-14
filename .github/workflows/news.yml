@@ -2,14 +2,13 @@ name: Telegram News Bot
 
 on:
   schedule:
-    - cron: '30 2 * * *'   # runs daily at 02:30 UTC
+    - cron: '30 2 * * *'
   workflow_dispatch:
 
 jobs:
   send-news:
     runs-on: ubuntu-latest
 
-    # Fix future GitHub Actions Node.js 20 deprecation warning
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -27,9 +26,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Telegram News Bot
+      - name: Debug Files
+        run: ls -R
+
+      - name: Run Bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
-          python news.py
+          python -u news.py
