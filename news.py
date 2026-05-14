@@ -5,32 +5,29 @@ import html
 import asyncio
 import logging
 import sqlite3
-from datetime import datetime
-from collections import Counter
-
 import requests
 import feedparser
+
+from datetime import datetime
+from collections import Counter
 from rapidfuzz import fuzz
 from textblob import TextBlob
 
 # =========================================================
-# ENV LOADING
+# ENV
 # =========================================================
 
-def load_dotenv(dotenv_path="newsbot.env"):
-    if not os.path.exists(dotenv_path):
+def load_dotenv(path="newsbot.env"):
+    if not os.path.exists(path):
         return False
 
-    with open(dotenv_path, encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-
             if not line or line.startswith("#") or "=" not in line:
                 continue
-
-            key, value = line.split("=", 1)
-            os.environ[key.strip()] = value.strip().strip('"').strip("'")
-
+            k, v = line.split("=", 1)
+            os.environ[k.strip()] = v.strip().strip('"').strip("'")
     return True
 
 
@@ -67,11 +64,10 @@ CREATE TABLE IF NOT EXISTS news (
     created_at TEXT
 )
 """)
-
 conn.commit()
 
 # =========================================================
-# RSS FEEDS
+# RSS
 # =========================================================
 
 RSS_FEEDS = {
@@ -86,10 +82,10 @@ RSS_FEEDS = {
         "https://hnrss.org/frontpage"
     ],
     "Cybersecurity": [
-        "https://news.google.com/rss/search?q=cybersecurity&hl=en-IN&gl=IN&ceid=IN:en",
+        "https://news.google.com/rss/search?q=cybersecurity&hl=en-IN&gl=IN&ceid=IN:en"
     ],
     "Finance": [
-        "https://news.google.com/rss/search?q=finance&hl=en-IN&gl=IN&ceid=IN:en",
+        "https://news.google.com/rss/search?q=finance&hl=en-IN&gl=IN&ceid=IN:en"
     ],
     "World": [
         "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-IN&gl=IN&ceid=IN:en",
@@ -97,150 +93,138 @@ RSS_FEEDS = {
     ]
 }
 
+CATEGORY_KEYWORDS = {
+    "AI": ["ai", "openai", "chatgpt", "gemini", "llm", "robot"],
+    "Technology": ["google", "microsoft", "apple", "software", "startup"],
+    "Cybersecurity": ["hack", "malware", "attack", "cyber"],
+    "Finance": ["stock", "bitcoin", "crypto", "market"]
+}
+
+BREAKING_KEYWORDS = ["breaking", "urgent", "attack", "war", "earthquake", "explosion"]
+
+SOURCE_SCORES = {
+    "reuters": 5,
+    "bbc": 5,
+    "cnn": 4,
+    "techcrunch": 4,
+    "google": 3,
+    "hacker news": 3
+}
+
 # =========================================================
-# CATEGORY DISPLAY
+# TELEGRAM API
 # =========================================================
 
-CATEGORY_DISPLAY = {
-    "AI": "🤖 AI & Machine Learning",
-    "Technology": "💻 Technology",
-    "Cybersecurity": "🛡 Cybersecurity",
-    "Finance": "💰 Finance",
-    "World": "🌍 World News",
-    "General": "📰 General News"
-}
+def tg(method, payload):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/{method}"
+    try:
+        return requests.post(url, data=payload, timeout=20).json()
+    except Exception as e:
+        logging.error(e)
 
 # =========================================================
 # HELPERS
 # =========================================================
 
-def telegram_request(method, payload):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/{method}"
-
-    try:
-        r = requests.post(url, data=payload, timeout=30)
-        return r.json()
-    except Exception as e:
-        logging.error(e)
-        return None
+def clean(text):
+    return html.unescape(re.sub("<.*?>", "", text or ""))
 
 
-def clean_html(text):
-    if not text:
-        return ""
-    text = re.sub("<.*?>", "", text)
-    return html.unescape(text)
+def sentiment(text):
+    p = TextBlob(text).sentiment.polarity
+    if p > 0.2:
+        return "😊 Positive"
+    if p < -0.2:
+        return "⚠ Negative"
+    return "😐 Neutral"
 
 
-def extract_image(entry):
-    try:
-        if "media_content" in entry:
-            media = entry.media_content
-            if media:
-                return media[0]["url"]
-    except:
-        pass
-    return None
+def is_breaking(title):
+    t = title.lower()
+    return any(k in t for k in BREAKING_KEYWORDS)
+
+
+def hashtags(title):
+    return " ".join(
+        f"#{w}" for w in title.split()[:5]
+        if len(w) > 3
+    )
+
+
+def detect_category(title):
+    t = title.lower()
+    for cat, kws in CATEGORY_KEYWORDS.items():
+        if any(k in t for k in kws):
+            return cat
+    return "General"
+
+
+def trend_keywords(news):
+    words = []
+    for n in news:
+        for w in n["title"].split():
+            if len(w) > 4:
+                words.append(w.lower())
+    return Counter(words).most_common(5)
 
 # =========================================================
 # NEWS FETCH
 # =========================================================
 
-def fetch_news(category="Technology"):
-    all_news = []
-    feeds = RSS_FEEDS.get(category, RSS_FEEDS["Technology"])
+def fetch(category):
+    items = []
 
-    for url in feeds:
-        try:
-            feed = feedparser.parse(url)
+    for url in RSS_FEEDS.get(category, RSS_FEEDS["Technology"]):
+        feed = feedparser.parse(url)
 
-            for entry in feed.entries:
-                title = entry.get("title", "")
-                link = entry.get("link", "")
+        for e in feed.entries:
+            items.append({
+                "title": e.get("title", ""),
+                "url": e.get("link", ""),
+                "desc": clean(e.get("summary", "")),
+                "source": feed.feed.get("title", "Unknown")
+            })
 
-                if not title or not link:
-                    continue
-
-                all_news.append({
-                    "title": title,
-                    "url": link,
-                    "description": clean_html(entry.get("summary", "")),
-                    "image": extract_image(entry),
-                    "source": feed.feed.get("title", "Unknown")
-                })
-
-        except Exception as e:
-            logging.error(e)
-
-    return all_news
+    return items
 
 
-def remove_duplicates(news):
-    unique = []
-
-    for item in news:
-        if not any(
-            fuzz.ratio(item["title"].lower(), x["title"].lower()) > 85
-            for x in unique
-        ):
-            unique.append(item)
-
-    return unique
+def dedupe(news):
+    out = []
+    for n in news:
+        if not any(fuzz.ratio(n["title"], x["title"]) > 85 for x in out):
+            out.append(n)
+    return out
 
 
-def rank_news(news):
-    for item in news:
-        item["score"] = 1
+def rank(news):
+    for n in news:
+        score = 0
+
+        title = n["title"].lower()
+
+        # keyword score
+        for kws in CATEGORY_KEYWORDS.values():
+            if any(k in title for k in kws):
+                score += 3
+
+        # breaking
+        if is_breaking(title):
+            score += 6
+
+        # source boost
+        for src, val in SOURCE_SCORES.items():
+            if src in n["source"].lower():
+                score += val
+
+        n["score"] = score
+
     return sorted(news, key=lambda x: x["score"], reverse=True)
 
 # =========================================================
-# NEWS SENDER
+# UI BUTTONS
 # =========================================================
 
-async def send_news(category, chat_id):
-
-    news = fetch_news(category)
-    news = remove_duplicates(news)
-    news = rank_news(news)
-
-    if not news:
-        telegram_request("sendMessage", {
-            "chat_id": chat_id,
-            "text": "No news available."
-        })
-        return
-
-    header = f"""🚀 TOP 7 NEWS
-
-{CATEGORY_DISPLAY.get(category, category)}
-📅 {datetime.now().strftime('%d %B %Y')}
-"""
-
-    telegram_request("sendMessage", {
-        "chat_id": chat_id,
-        "text": header,
-        "reply_markup": json.dumps(get_buttons())
-    })
-
-    for i, item in enumerate(news[:TOTAL_NEWS], 1):
-
-        msg = f"""📰 {i}. {item['title']}
-
-🔗 {item['url']}
-"""
-
-        telegram_request("sendMessage", {
-            "chat_id": chat_id,
-            "text": msg
-        })
-
-        await asyncio.sleep(1)
-
-# =========================================================
-# BUTTON MENU (IMPORTANT FIX)
-# =========================================================
-
-def get_buttons():
+def buttons():
     return {
         "inline_keyboard": [
             [
@@ -251,69 +235,115 @@ def get_buttons():
                 {"text": "🛡 Cyber", "callback_data": "Cybersecurity"},
                 {"text": "💰 Finance", "callback_data": "Finance"}
             ],
-            [
-                {"text": "🌍 World", "callback_data": "World"}
-            ]
+            [{"text": "🌍 World", "callback_data": "World"}]
         ]
     }
 
 # =========================================================
-# SINGLE CALLBACK LOOP (NO INFINITE STALLS IN ACTIONS)
+# SEND NEWS (FULL FEATURE ENGINE)
 # =========================================================
 
-async def handle_callbacks():
+async def send_news(category, chat_id):
 
-    last_update = None
+    news = rank(dedupe(fetch(category)))
 
+    if not news:
+        tg("sendMessage", {"chat_id": chat_id, "text": "No news available"})
+        return
+
+    trends = trend_keywords(news)
+
+    header = f"""🚀 TOP NEWS - {category}
+
+🔥 Trending:
+{chr(10).join([f"• {w} ({c})" for w, c in trends])}
+
+📅 {datetime.now().strftime('%d %B %Y')}
+"""
+
+    tg("sendMessage", {
+        "chat_id": chat_id,
+        "text": header,
+        "reply_markup": json.dumps(buttons())
+    })
+
+    for i, n in enumerate(news[:TOTAL_NEWS], 1):
+
+        msg = f"""📰 {i}. {n['title']}
+
+🤖 {sentiment(n['title'])}
+🔥 Score: {n['score']}
+🏷 {hashtags(n['title'])}
+
+🔗 {n['url']}"""
+
+        tg("sendMessage", {
+            "chat_id": chat_id,
+            "text": msg
+        })
+
+        await asyncio.sleep(1)
+
+    # digest
+    digest = "🧠 DAILY DIGEST\n\n" + "\n".join(
+        f"• {n['title']}" for n in news[:5]
+    )
+
+    tg("sendMessage", {
+        "chat_id": chat_id,
+        "text": digest
+    })
+
+# =========================================================
+# CALLBACK HANDLER (GITHUB SAFE)
+# =========================================================
+
+async def handle_updates():
+
+    last = None
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
 
-    if last_update:
-        url += f"?offset={last_update + 1}"
+    if last:
+        url += f"?offset={last+1}"
 
     try:
         res = requests.get(url, timeout=20).json()
 
         if res.get("ok"):
-            for update in res["result"]:
+            for u in res["result"]:
+                last = u["update_id"]
 
-                last_update = update["update_id"]
-
-                if "message" in update:
-                    msg = update["message"]
-                    text = msg.get("text", "")
-                    chat_id = msg["chat"]["id"]
+                if "message" in u:
+                    chat_id = u["message"]["chat"]["id"]
+                    text = u["message"].get("text", "")
 
                     if text == "/start":
-                        telegram_request("sendMessage", {
+                        tg("sendMessage", {
                             "chat_id": chat_id,
-                            "text": "🚀 Choose a category:",
-                            "reply_markup": json.dumps(get_buttons())
+                            "text": "🚀 News Bot Ready",
+                            "reply_markup": json.dumps(buttons())
                         })
 
-                if "callback_query" in update:
-                    cb = update["callback_query"]
-                    category = cb["data"]
+                if "callback_query" in u:
+                    cb = u["callback_query"]
                     chat_id = cb["message"]["chat"]["id"]
 
-                    telegram_request("answerCallbackQuery", {
+                    tg("answerCallbackQuery", {
                         "callback_query_id": cb["id"]
                     })
 
-                    await send_news(category, chat_id)
+                    await send_news(cb["data"], chat_id)
 
     except Exception as e:
         logging.error(e)
 
 # =========================================================
-# MAIN (IMPORTANT FIX FOR GITHUB ACTIONS)
+# MAIN (GITHUB ACTION SAFE)
 # =========================================================
 
 async def main():
-    print("Bot started")
-
-    await handle_callbacks()
-
-    # OPTIONAL: default run (can be removed)
+    print("Bot Running (Full Feature Mode)")
+    await handle_updates()
     await send_news("Technology", CHAT_ID)
 
 
