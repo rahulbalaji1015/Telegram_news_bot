@@ -11,6 +11,7 @@ jobs:
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      PYTHONUNBUFFERED: "1"   # 🔥 IMPORTANT FIX
 
     steps:
       - name: Checkout Repository
@@ -26,9 +27,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Debug Files
+      # 🔥 SHOW EXACT FILES (DEBUG)
+      - name: Debug Repository Files
         run: ls -R
 
+      # 🔥 SHOW PYTHON VERSION
+      - name: Check Python
+        run: python --version
+
+      # 🔥 RUN BOT (REAL-TIME OUTPUT ENABLED)
       - name: Run Bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
